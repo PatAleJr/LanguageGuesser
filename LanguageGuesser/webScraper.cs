@@ -16,24 +16,14 @@ namespace LanguageGuesser
         public string url;
         public List<string> textContent = new List<string>();
         public List<string> textContentSorted = new List<string>();
-        public enum TextType { Article, Book};
-        public TextType thisTextType;
 
-        public enum Language { English, French, Spanish};
-
-        public static Dictionary<TextType, int> typeToMinLengthToConsider = new Dictionary<TextType, int>();
-        private int minLengthToConsider = 100;
+        public string language;
 
         private string[] titles = { "Mr", "Miss", "Mrs", "Dr", "Jr"};
 
-        public webScraper(string url, TextType type)
+        public webScraper(string url, string language)
         {
-            typeToMinLengthToConsider.Add(TextType.Article, 1);
-            typeToMinLengthToConsider.Add(TextType.Book, 1);
-
-            thisTextType = type;
-            minLengthToConsider = typeToMinLengthToConsider[thisTextType];
-
+            this.language = language;
             this.url = url;
         }
 
@@ -66,19 +56,14 @@ namespace LanguageGuesser
                 if (nNode.Name.Equals("p"))  //Parse the text
                 {
                     string text = nNode.InnerText;
-                    if (text.Length > minLengthToConsider)
-                    {
-                        //Console.WriteLine(nNode.InnerText);
-                        scrapedText.Add(text);
-                    }
+                    scrapedText.Add(text);
                 }
             }
 
             textContent = scrapedText;
         }
 
-
-        public void convertForMLLanguage(Language language)
+        public void convertForMLLanguage()
         {
             Console.WriteLine("Sorting to sentences");
 
@@ -87,23 +72,43 @@ namespace LanguageGuesser
             foreach (string paragraph in textContent)
             {
                 List<string> sentencesInParagraph = getSentences(paragraph);
+
                 foreach (string sentence in sentencesInParagraph)
                     allSentences.Add(sentence); 
             }
 
             textContentSorted = allSentences;
         }
+
+        public bool periodIsForTitle(string sentence, int startIndex, int endIndex)    //Mr Miss Jr
+        {
+            if ((endIndex >= sentence.Length || endIndex < 0) && ((startIndex >= sentence.Length || startIndex < 0)))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < titles.Length; i++)
+            {
+                string s = sentence.Substring(startIndex, endIndex-startIndex);
+                if (s.Contains(titles[i]))
+                {
+                    Console.WriteLine("True");
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public List<string> getSentences(string paragraph)
         {            
             List<string> sentences = new List<string>();
 
             int index;
+            int startIndex = 0;
 
             bool isForTitle;
             bool nextCharIsPeriod;
             bool previousCharIsUpper;
-
-            int startIndex = 0;
 
             while (true)
             {
@@ -113,14 +118,20 @@ namespace LanguageGuesser
                     break;
 
                 //isForTitle = true;
-                isForTitle = periodIsForTitle(paragraph, index);
+                isForTitle = periodIsForTitle(paragraph, startIndex, index);
                 nextCharIsPeriod = (paragraph.Substring(index + 1).Length > 1 && paragraph[index + 1] == '.');
                 previousCharIsUpper = index > 0 && Char.IsUpper(paragraph[index - 1]);
 
                 if (!previousCharIsUpper && !nextCharIsPeriod && !isForTitle)
                 {
+                    //If there is quotation mark after . increase index to include quotation mark
+                    //Note: UTF-8 has several characters that look like quotation marks
+                    if (paragraph.Length > index + 1 && paragraph[index + 1] == '”')
+                        index++;
+
                     //Cut sentence out
                     string sentence = paragraph.Substring(0, index + 1);
+                    sentence = fixSentence(sentence);
                     sentences.Add(sentence);
                     paragraph = paragraph.Substring(index + 1);
 
@@ -128,74 +139,29 @@ namespace LanguageGuesser
                 }
                 else {
                     //Move on to next period
-                    
+                    startIndex = index + 1;
                 }
-
-
             }
-
             return sentences;
+        }
 
-            /*
+        public string fixSentence(string sentence)
+        {
 
-            //Finds next period (end of sentence)
-            int index = paragraph.IndexOf(".");
-            bool isForTitle = periodIsForTitle(paragraph, index);
-            bool nextCharIsPeriod = (paragraph.Substring(index + 1).Length > 1 && paragraph[index + 1] == '.');
-            bool previousCharIsUpper = index > 0 && Char.IsUpper(paragraph[index - 1]);
-            
-            while ((previousCharIsUpper || nextCharIsPeriod || isForTitle) && paragraph.Length > index + 1)
-            {
-                index = paragraph.IndexOf(".", index+1);
-                nextCharIsPeriod = (paragraph.Substring(index + 1).Length > 1 && paragraph[index + 1] == '.');
-                previousCharIsUpper = index > 0 && Char.IsUpper(paragraph[index - 1]);
+            sentence = sentence.Replace(Environment.NewLine, " ");
 
+            //Eliminate space at begining of sentence
+            while (sentence[0] == ' ')
+                sentence = sentence.Substring(1);
 
-                isForTitle = periodIsForTitle(paragraph, index);
-                if (isForTitle) Console.WriteLine("Period is for title");
-            }
+            sentence = replacePartOfSentence(sentence, "&#x27;", "'");
+            sentence = replacePartOfSentence(sentence, "&quot;", "\"");
+            sentence = replacePartOfSentence(sentence, "&mdash;", "-");
+            sentence = removeCurlyBraces(sentence);
 
-            while (index != -1)
-            {
-                //If there is quotation mark after . increase index to include quotation mark
-                //Note: UTF-8 has several characters that look like quotation marks
-                if (paragraph.Length > index + 1 && paragraph[index + 1] == '”')
-                    index++;
+            sentence += "\t" + language;
 
-                //Get the sentence and remove it from paragraph
-                string sentence = paragraph.Substring(0, index+1);
-                paragraph = paragraph.Substring(index+1);
-
-                sentence = sentence.Replace(Environment.NewLine, " ");
-
-                //Eliminate space at begining of sentence
-                if (sentence[0] == ' ') 
-                    sentence = sentence.Substring(1);
-
-                sentence = removeCurlyBraces(sentence);
-                sentence = changeApostrophes(sentence);
-                sentence = changeQuotes(sentence);
-                sentences.Add(sentence);
-                
-                //Finds next period
-                index = paragraph.IndexOf(".");
-
-                //Skips to next period if this period doesnt mark end of sentence
-                isForTitle = periodIsForTitle(sentence, index);
-                if (isForTitle) Console.WriteLine("Period is for title");
-                nextCharIsPeriod = (paragraph.Substring(index + 1).Length > 1 && paragraph[index + 1] == '.');
-                previousCharIsUpper = index > 0 && Char.IsUpper(paragraph[index - 1]);
-                while ((previousCharIsUpper || nextCharIsPeriod || isForTitle) && paragraph.Length > index + 1)
-                {
-                    index = paragraph.IndexOf(".", index + 2);
-                    nextCharIsPeriod = (paragraph.Substring(index + 1).Length > 1 && paragraph[index + 1] == '.');
-                    previousCharIsUpper = index > 0 && Char.IsUpper(paragraph[index - 1]);
-                    isForTitle = periodIsForTitle(sentence, index);
-                    if (isForTitle) Console.WriteLine("Period is for title");
-                }
-            }
-
-            */
+            return sentence;
         }
 
         public string removeCurlyBraces(string sentence)
@@ -215,61 +181,25 @@ namespace LanguageGuesser
 
             return sentence;
         }
-        public string changeApostrophes(string sentence)
+
+        public string replacePartOfSentence(string sentence, string unwanted, string newPiece)
         {
-            int indexToRemove = sentence.IndexOf("&#x27;");
+            int indexToRemove = sentence.IndexOf(unwanted);
 
             while (indexToRemove != -1)
             {
                 string before = sentence.Substring(0, indexToRemove);
-                string after = sentence.Substring(indexToRemove + "&#x27;".Length);
-                sentence = before + "'" + after;
+                string after = sentence.Substring(indexToRemove + unwanted.Length);
+                sentence = before + newPiece + after;
 
-                indexToRemove = sentence.IndexOf("&#x27;");
+                indexToRemove = sentence.IndexOf(unwanted);
             }
 
             return sentence;
-        }
-        public string changeQuotes(string sentence)
-        {
-            int indexToRemove = sentence.IndexOf("&quot;");
-
-            while (indexToRemove != -1)
-            {
-                string before = sentence.Substring(0, indexToRemove);
-                string after = sentence.Substring(indexToRemove + "&quot;".Length);
-                sentence = before + "\"" + after;
-
-                indexToRemove = sentence.IndexOf("&quot;");
-            }
-
-            return sentence;
-            
-        }
-
-        public bool periodIsForTitle(string sentence, int index)    //Mr Miss Jr
-        {
-            if (index >= sentence.Length || index < 0)
-            {
-                //Console.WriteLine("Return false : index out of bounds");
-                return false;
-            }
-
-            for (int i = 0; i < titles.Length; i++)
-            {
-                string s = sentence.Substring(0, index);
-                if (s.Contains(titles[i]))
-                {
-                    Console.WriteLine("True");
-                    return true;
-                }
-            }
-            //Console.WriteLine("Return false : isn't for title");
-            return false;
         }
 
         //Returns path of generated file
-        public string saveIntoTextFile(string path = @"H:\Documents\VisualStudioProjects\LanguageTextFiles\myTextFile")
+        public string saveIntoTextFile(string path = @"H:\Documents\VisualStudioProjects\LanguageTextFiles\myTextFile.tsv")
         {
             TextFile textFile = new TextFile(path);
 

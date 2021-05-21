@@ -10,6 +10,7 @@ namespace LanguageGuesser
     class TextFile
     {
         public static int versionDigits = 3;   //MyTextFile001 -> 001
+        public static string fileFormat = ".tsv";
         public string path;
         public string defaultTryPath = @"H:\Documents\VisualStudioProjects\LanguageTextFiles\myTextFile";
         
@@ -19,7 +20,7 @@ namespace LanguageGuesser
         }
         public TextFile(string path)
         {
-            this.path = generateFile(path + "_001");
+            this.path = generateFile(path + "_001" + fileFormat);
         }
 
         //Returns path of generated file
@@ -36,8 +37,8 @@ namespace LanguageGuesser
                 //Note: always starts from version 001 and loops up to smallest empty number
 
                 //Gets number version
-                string mainFileName = tryPath.Substring(0, tryPath.Length - versionDigits);
-                string s_fileNumber = tryPath.Substring(tryPath.Length- versionDigits);    //Gets last 3 characters
+                string mainFileName = tryPath.Substring(0, tryPath.Length - (versionDigits+fileFormat.Length));
+                string s_fileNumber = tryPath.Substring(tryPath.Length- (versionDigits+fileFormat.Length), versionDigits);    //Gets last 3 characters
                 
                 int i_fileNum = Int32.Parse(s_fileNumber);
                 int i_newFileNum = i_fileNum + 1;
@@ -56,7 +57,7 @@ namespace LanguageGuesser
 
                 s_newFileNum += i_newFileNum;
 
-                return generateFile(mainFileName + s_newFileNum);
+                return generateFile(mainFileName + s_newFileNum + fileFormat);
             }
         }
 
