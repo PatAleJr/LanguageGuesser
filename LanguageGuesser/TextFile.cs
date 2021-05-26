@@ -13,14 +13,20 @@ namespace LanguageGuesser
         public static string fileFormat = ".tsv";
         public string path;
         public string defaultTryPath = @"H:\Documents\VisualStudioProjects\LanguageTextFiles\myTextFile";
-        
+
         public TextFile()
         {
             path = generateFile(defaultTryPath);
         }
-        public TextFile(string path)
+        public TextFile(string path, bool makeNewFile = true)
         {
-            this.path = generateFile(path + "_001" + fileFormat);
+            if (!makeNewFile && File.Exists(path))
+            {
+                this.path = path;
+            }
+            else {
+                this.path = generateFile(path + "_001" + fileFormat);
+            }
         }
 
         //Returns path of generated file
@@ -68,6 +74,7 @@ namespace LanguageGuesser
             {
                 sw.WriteLine(toWrite);
             }
+            
         }
     }
 }

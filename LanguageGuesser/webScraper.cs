@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net;
 using System.IO;
+using System.Web;
 
 namespace LanguageGuesser
 {
@@ -91,10 +92,7 @@ namespace LanguageGuesser
             {
                 string s = sentence.Substring(startIndex, endIndex-startIndex);
                 if (s.Contains(titles[i]))
-                {
-                    Console.WriteLine("True");
                     return true;
-                }
             }
             return false;
         }
@@ -132,7 +130,10 @@ namespace LanguageGuesser
                     //Cut sentence out
                     string sentence = paragraph.Substring(0, index + 1);
                     sentence = fixSentence(sentence);
-                    sentences.Add(sentence);
+
+                    if (sentence.Length > 3 + language.Length)
+                        sentences.Add(sentence);
+
                     paragraph = paragraph.Substring(index + 1);
 
                     startIndex = 0;
@@ -150,14 +151,13 @@ namespace LanguageGuesser
 
             sentence = sentence.Replace(Environment.NewLine, " ");
 
+            sentence = removeCurlyBraces(sentence);
+            sentence = removeSquareBraces(sentence);
+            sentence = HttpUtility.HtmlDecode(sentence);
+
             //Eliminate space at begining of sentence
             while (sentence[0] == ' ')
                 sentence = sentence.Substring(1);
-
-            sentence = replacePartOfSentence(sentence, "&#x27;", "'");
-            sentence = replacePartOfSentence(sentence, "&quot;", "\"");
-            sentence = replacePartOfSentence(sentence, "&mdash;", "-");
-            sentence = removeCurlyBraces(sentence);
 
             sentence += "\t" + language;
 
@@ -182,6 +182,25 @@ namespace LanguageGuesser
             return sentence;
         }
 
+        public string removeSquareBraces(string sentence)
+        {
+            int first = sentence.IndexOf("[");
+            int second = sentence.IndexOf("]");
+
+
+            while (first != -1 && second != -1)
+            {
+                string before = sentence.Substring(0, first);
+                string after = sentence.Substring(second+1);
+                sentence = before + after;
+
+                first = sentence.IndexOf("[");
+                second = sentence.IndexOf("]");
+            }
+
+            return sentence;
+        }
+
         public string replacePartOfSentence(string sentence, string unwanted, string newPiece)
         {
             int indexToRemove = sentence.IndexOf(unwanted);
@@ -198,17 +217,15 @@ namespace LanguageGuesser
             return sentence;
         }
 
-        //Returns path of generated file
-        public string saveIntoTextFile(string path = @"H:\Documents\VisualStudioProjects\LanguageTextFiles\myTextFile.tsv")
+        //Returns when complete
+        public bool saveIntoTextFile( TextFile file)
         {
-            TextFile textFile = new TextFile(path);
-
             foreach (string str in textContentSorted)
             {
-                textFile.write(str);
+                file.write(str);
             }
 
-            return textFile.path;
+            return true;
         }
     }
 }
