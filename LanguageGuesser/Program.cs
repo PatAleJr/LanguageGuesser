@@ -14,8 +14,23 @@ namespace LanguageGuesser
     {   
         public static webScraper webText;
 
+        //Danish does not work
+        //Swedish, slovakian, polish, latin, esperanto, hungarian, bulgarian, 
+        //Afrikaans, Croatian, Estonian, hawaiian, latvian, swahili, zulu
+
         public static string[,] resources = new string[,]
-        {
+        {           
+            { "Czech", "https://www.gutenberg.org/cache/epub/34225/pg34225.html"},
+
+            { "Portugese", "https://www.gutenberg.org/files/57895/57895-h/57895-h.htm"},
+            { "Portugese", "https://www.gutenberg.org/cache/epub/24401/pg24401.html"},
+
+            { "Catalan", "https://www.gutenberg.org/cache/epub/27142/pg27142.html"},
+
+            { "Finnish", "https://www.gutenberg.org/cache/epub/57633/pg57633.html"},
+            { "Finnish", "https://www.gutenberg.org/cache/epub/65281/pg65281.html"},
+
+            { "Romanian", "https://www.bursa.ro/bursa-de-valori-bursa-ideilor-si-bursa-politica-69133343"},
             { "Romanian", "https://www.gutenberg.org/files/64597/64597-h/64597-h.htm"},
 
             { "Italian", "https://www.lanotiziagiornale.it/biden-intelligence-covid19/"},
@@ -44,14 +59,12 @@ namespace LanguageGuesser
             Console.WriteLine("Starting program");
             
             string basePath = @"H:\Documents\VisualStudioProjects\LanguageTextFiles\";
-            string path = basePath + "Final Document1";
+            string path = basePath + "Real Final Document";
 
             TextFile textFile = new TextFile(path, true);
 
-            //for (int i = 0; i < resources.Length; i++)
-            //{
-
-            int i = 0;
+            for (int i = 0; i < resources.Length; i++)
+            {
                 webText = new webScraper(resources[i, 1], resources[i, 0]);
 
                 webText.scrapeURL();
@@ -61,7 +74,7 @@ namespace LanguageGuesser
 
                 if (complete)
                     Console.WriteLine("Finished writing resource " + i + " to " + path);
-            //}
+            }
 
             Console.WriteLine("Program complete");
 

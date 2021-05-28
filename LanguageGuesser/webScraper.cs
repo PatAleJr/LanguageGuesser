@@ -20,7 +20,7 @@ namespace LanguageGuesser
 
         public string language;
 
-        private string[] titles = { "Mr", "Miss", "Mrs", "Dr", "Jr"};
+        private string[] titles = { "Mr", "Miss", "Mrs", "Dr", "Jr", "Fr", "Sr", "Mlle", "Mme"};
 
         public webScraper(string url, string language)
         {
@@ -150,6 +150,7 @@ namespace LanguageGuesser
         {
 
             sentence = sentence.Replace(Environment.NewLine, " ");
+            sentence = sentence.Replace("\t", "");
 
             sentence = removeCurlyBraces(sentence);
             sentence = removeSquareBraces(sentence);
