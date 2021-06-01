@@ -68,17 +68,10 @@ namespace LanguageGuesser
         {
             Console.WriteLine("Sorting to sentences");
 
-            List<string> allSentences = new List<string>();
-
             foreach (string paragraph in textContent)
             {
-                List<string> sentencesInParagraph = getSentences(paragraph);
-
-                foreach (string sentence in sentencesInParagraph)
-                    allSentences.Add(sentence); 
+                getSentences(paragraph);
             }
-
-            textContentSorted = allSentences;
         }
 
         public bool periodIsForTitle(string sentence, int startIndex, int endIndex)    //Mr Miss Jr
@@ -132,7 +125,7 @@ namespace LanguageGuesser
                     sentence = fixSentence(sentence);
 
                     if (sentence.Length > 3 + language.Length)
-                        sentences.Add(sentence);
+                        textContentSorted.Add(sentence);
 
                     paragraph = paragraph.Substring(index + 1);
 
@@ -153,7 +146,7 @@ namespace LanguageGuesser
             sentence = sentence.Replace("\t", "");
 
             sentence = removeCurlyBraces(sentence);
-            sentence = removeSquareBraces(sentence);
+            //sentence = removeSquareBraces(sentence);
             sentence = HttpUtility.HtmlDecode(sentence);
 
             //Eliminate space at begining of sentence
