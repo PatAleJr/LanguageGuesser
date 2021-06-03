@@ -23,7 +23,6 @@ namespace LanguageGuesser
         public static string[,] resources = new string[,]
         {
 
-
         };
 
         static void Main(string[] args)
@@ -58,18 +57,22 @@ namespace LanguageGuesser
 /*
  * 
  * 
- *             { "Czech", "https://www.gutenberg.org/cache/epub/34225/pg34225.html"},
+ *          { "Czech", "https://www.gutenberg.org/cache/epub/34225/pg34225.html"},
 
             { "Portugese", "https://www.gutenberg.org/files/57895/57895-h/57895-h.htm"},
             { "Portugese", "https://www.gutenberg.org/cache/epub/24401/pg24401.html"},
 
             { "Catalan", "https://www.gutenberg.org/cache/epub/27142/pg27142.html"},
+            { "Catalan", "https://www.gutenberg.org/cache/epub/17583/pg17583.html"},
+            { "Catalan", "https://www.gutenberg.org/cache/epub/20253/pg20253.html"},
+            { "Catalan", "https://www.gutenberg.org/cache/epub/15346/pg15346.html"}
 
             { "Finnish", "https://www.gutenberg.org/cache/epub/57633/pg57633.html"},
             { "Finnish", "https://www.gutenberg.org/cache/epub/65281/pg65281.html"},
 
             { "Romanian", "https://www.bursa.ro/bursa-de-valori-bursa-ideilor-si-bursa-politica-69133343"},
             { "Romanian", "https://www.gutenberg.org/files/64597/64597-h/64597-h.htm"},
+            { "Romanian", "https://www.gutenberg.org/cache/epub/11756/pg11756.html"}
 
             { "Italian", "https://www.lanotiziagiornale.it/biden-intelligence-covid19/"},
             { "Italian", "https://www.lanotiziagiornale.it/contro-codice-degli-appalti/"},
@@ -87,9 +90,19 @@ namespace LanguageGuesser
             { "French", "https://www.gutenberg.org/files/54873/54873-h/54873-h.htm"},
             { "French", "https://ici.radio-canada.ca/nouvelle/1796167/jason-kenney-assouplissement-covid-19-alberta-reouverture"},
             { "French", "https://ici.radio-canada.ca/nouvelle/1796177/fusillade-san-jose-gare-triage-californie"},
+            { "French", "https://www.gutenberg.org/files/18812/18812-h/18812-h.htm" },
+            { "French", "https://www.gutenberg.org/cache/epub/17808/pg17808.html"},
+            { "French", "https://www.gutenberg.org/files/56393/56393-h/56393-h.htm"},
+            { "French", "https://www.gutenberg.org/files/25335/25335-h/25335-h.htm"},
+            { "French", "https://www.gutenberg.org/files/63979/63979-h/63979-h.htm"}
 
             { "Spanish", "https://www.gutenberg.org/files/2000/2000-h/2000-h.htm"},
-            { "Spanish", "https://es.wikipedia.org/wiki/Protestas_en_Colombia_de_2021"}
+            { "Spanish", "https://es.wikipedia.org/wiki/Protestas_en_Colombia_de_2021"},
+            {"Spanish", "https://www.gutenberg.org/files/14307/14307-h/14307-h.htm"},
+            {"Spanish", "https://www.gutenberg.org/files/19543/19543-h/19543-h.htm"},
+            {"Spanish", "https://www.gutenberg.org/files/43861/43861-h/43861-h.htm"},
+            {"Spanish", "https://www.gutenberg.org/files/55157/55157-h/55157-h.htm"},
+            {"Spanish", "https://www.gutenberg.org/files/56219/56219-h/56219-h.htm"}
 
             { "Danish", "https://www.dr.dk/nyheder/penge/nu-kan-du-downloade-det-nye-coronapas-se-fordele-og-ulemper-ved-skifte-til-den-nye-app"},
             { "Danish", "https://www.dr.dk/nyheder/indland/test-dig-selv-har-nedlukningen-oedelagt-din-evne-til-genkende-alverdens-flag"},
@@ -113,7 +126,8 @@ namespace LanguageGuesser
             { "Irish", "https://www.gutenberg.org/files/50913/50913-h/50913-h.htm"},
 
             { "Norwegian", "https://www.gutenberg.org/files/43725/43725-h/43725-h.htm"},
-            { "Norwegian", "https://www.gutenberg.org/files/34062/34062-h/34062-h.htm"}
+            { "Norwegian", "https://www.gutenberg.org/files/34062/34062-h/34062-h.htm"},
+            { "Norwegian", "https://www.gutenberg.org/files/53978/53978-h/53978-h.htm"}
 
             { "Frisian", "https://www.gutenberg.org/files/60480/60480-h/60480-h.htm"},
             { "Frisian", "https://www.gutenberg.org/files/63023/63023-h/63023-h.htm"},
@@ -122,6 +136,11 @@ namespace LanguageGuesser
             { "Esperanto", "https://www.gutenberg.org/files/27915/27915-h/27915-h.htm"},
             { "Esperanto", "https://www.gutenberg.org/files/31348/31348-h/31348-h.htm"},
             { "Esperanto", "https://www.gutenberg.org/files/20802/20802-h/20802-h.htm"}
+
+            { "Swedish", "https://www.gutenberg.org/cache/epub/52671/pg52671.html"},
+            { "Swedish", "https://www.gutenberg.org/cache/epub/52752/pg52752.html"},
+            { "Swedish", "https://www.gutenberg.org/files/48638/48638-h/48638-h.htm"},
+            { "Swedish", "https://www.gutenberg.org/cache/epub/54714/pg54714.html" }
  * 
  * 
  **/

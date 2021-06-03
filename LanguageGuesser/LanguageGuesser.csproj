@@ -9,4 +9,8 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.33" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LanguageGuesserML.Model\LanguageGuesserML.Model.csproj" />
+  </ItemGroup>
+
 </Project>
